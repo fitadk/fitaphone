@@ -1,0 +1,8 @@
+version: '2'
+services:
+  asterisk:
+    build:
+      context: .
+      dockerfile: docker/Asterisk/Dockerfile
+    image: fitadk/asterisk
+    restart: unless-stopped
