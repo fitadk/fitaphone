@@ -30,8 +30,6 @@ RUN chown -R $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
 	&& chown -R $ASTERISKUSER:$ASTERISKUSER /var/run/asterisk \
 	&& chown -R $ASTERISKUSER:$ASTERISKUSER /etc/asterisk
 
-RUN rm -rf /tmp/*
-
 VOLUME /var/log/asterisk
 VOLUME /etc/asterisk
 VOLUME /var/lib/asterisk
