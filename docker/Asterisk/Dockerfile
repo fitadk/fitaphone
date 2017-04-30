@@ -21,7 +21,7 @@ RUN mkdir src && cd src \
 WORKDIR /tmp/src/asterisk-$ASTERISKVER
 RUN  ./configure
 RUN  cd menuselect && make menuselect && cd .. & make menuselect-tree
-RUN  menuselect/menuselect --disable BUILD_NATIVE menuselect/menuselect.makeopts 
+RUN  menuselect/menuselect --disable BUILD_NATIVE menuselect/menuselect.makeopts
 RUN  make && make install && make config
 
 RUN chown -R $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
@@ -35,6 +35,9 @@ VOLUME /etc/asterisk
 VOLUME /var/lib/asterisk
 
 EXPOSE 5060
+
+#install samples to have something to play with
+RUN cd /tmp/src/asterisk-$ASTERISKVER && make samples
 
 WORKDIR /var/lib/asterisk
 USER $ASTERISKUSER
