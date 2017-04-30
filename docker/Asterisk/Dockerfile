@@ -36,8 +36,8 @@ VOLUME /var/lib/asterisk
 
 EXPOSE 5060
 
-#install samples to have something to play with
-RUN cd /tmp/src/asterisk-$ASTERISKVER && make samples
+# copy example files to be able to boot
+COPY docker/Asterisk/etc/* /etc/asterisk/
 
 WORKDIR /var/lib/asterisk
 USER $ASTERISKUSER
