@@ -37,7 +37,7 @@ view model =
         [ CDN.stylesheet
         , Grid.row []
             [ Grid.col []
-                [ Button.button [ Button.primary ] [ text "Opret bruger" ] ]
+                [ Button.button [ Button.primary, Button.onClick CreateUser ] [ text ("Opret bruger" ++ (toString model)) ] ]
             ]
         , Grid.row []
             [ Grid.col []
