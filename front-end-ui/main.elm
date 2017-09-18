@@ -16,6 +16,21 @@ type alias Model =
     Int
 
 
+model : Model
+model =
+    0
+
+
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        CreateUser ->
+            model + 1
+
+        CancelCreateUser ->
+            model - 1
+
+
 view : Model -> Html Msg
 view model =
     Grid.container []
@@ -43,3 +58,7 @@ view model =
                 ]
             ]
         ]
+
+
+main =
+    Html.beginnerProgram { model = model, view = view, update = update }
