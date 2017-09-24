@@ -1,0 +1,13 @@
+[ { "username" : "Hugo",
+    "phonenumber" : "1001",
+    "lastactive" : "20/8-17"
+  },
+  { "username" : "Jonas",
+    "phonenumber" : "1101",
+    "lastactive" : "23/8-17"
+  },
+  { "username" : "Jacob",
+    "phonenumber" : "1111",
+    "lastactive" : "28/8-17"
+  }
+]
