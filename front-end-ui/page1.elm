@@ -3,6 +3,7 @@ module Page1 exposing (main)
 import List
 import Http
 import Json.Decode as Decode exposing (field, Decoder)
+import Json.Encode as Encode exposing (..)
 import Html exposing (..)
 import Html.Attributes as Attr exposing (..)
 import Bootstrap.CDN as CDN
@@ -31,7 +32,7 @@ subscriptions model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model ShowUserList "0" [], doListUsers )
+    ( Model ShowUserList "0" "" "" "" [], doListUsers )
 
 
 
@@ -53,19 +54,22 @@ type alias User =
 type alias Model =
     { state : State
     , lastRequestCode : String
+    , userName : String
+    , phoneNumber : String
+    , email : String
     , users : List User
     }
 
 
 
--- model : Model
--- model =
---    { state = ShowUserList, lastRequestCode = "0", users = [] }
 -- UPDATE
 
 
 type Msg
-    = List
+    = ListUsers
+    | SetUserName String
+    | SetPhoneNumber String
+    | SetEmail String
     | Create
     | CreateUser
     | UserCreated (Result Http.Error String)
@@ -75,12 +79,6 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        List ->
-            ( { model | state = ShowUserList }, Cmd.none )
-
-        Create ->
-            ( { model | state = ShowCreateUser }, Cmd.none )
-
         CreateUser ->
             ( model, doCreateUser model )
 
@@ -95,6 +93,21 @@ update msg model =
 
         UpdateUserList (Err _) ->
             ( { model | state = ShowUserList }, Cmd.none )
+
+        Create ->
+            ( { model | state = ShowCreateUser }, Cmd.none )
+
+        ListUsers ->
+            ( { model | state = ShowUserList }, Cmd.none )
+
+        SetPhoneNumber value ->
+            ( { model | phoneNumber = value }, Cmd.none )
+
+        SetUserName value ->
+            ( { model | userName = value }, Cmd.none )
+
+        SetEmail value ->
+            ( { model | email = value }, Cmd.none )
 
 
 
@@ -157,22 +170,22 @@ createUserView model =
                 [ h4 [] [ text "Opret FITA Phone bruger" ]
                 , Form.group []
                     [ Form.label [] [ text "Brugernavn" ]
-                    , Input.text [ Input.attrs [ placeholder "fx hansjensen" ] ]
+                    , Input.text [ Input.attrs [ placeholder "fx hansjensen" ], Input.onInput SetUserName ]
                     ]
                 , Form.group []
                     [ Form.label [] [ text "Telefonnummer" ]
-                    , Input.text [ Input.attrs [ placeholder "fx 3555" ] ]
+                    , Input.text [ Input.attrs [ placeholder "fx 3555" ], Input.onInput SetPhoneNumber ]
                     ]
                 , Form.group []
                     [ Form.label [] [ text "Email" ]
-                    , Input.text [ Input.attrs [ placeholder "fx hjensen@domain.dk" ] ]
+                    , Input.text [ Input.attrs [ placeholder "fx hjensen@domain.dk" ], Input.onInput SetEmail ]
                     ]
                 , Form.row [ Row.rightSm ]
-                    [ Form.col [ Col.sm2 ]
-                        [ Button.button [ Button.secondary, Button.onClick List ]
+                    [ Form.col [ Col.sm1 ]
+                        [ Button.button [ Button.secondary, Button.onClick ListUsers ]
                             [ text "Annullere" ]
                         ]
-                    , Form.col [ Col.sm2 ]
+                    , Form.col [ Col.sm4 ]
                         [ Button.button
                             [ Button.primary, Button.attrs [ class "float-right" ], Button.onClick CreateUser ]
                             [ text "Opret" ]
@@ -202,13 +215,27 @@ getUsers model =
     Cmd.none
 
 
+userEncoder : Model -> Encode.Value
+userEncoder model =
+    Encode.object
+        [ ( "username", Encode.string model.userName )
+        , ( "phonenumer", Encode.string model.phoneNumber )
+        , ( "email", Encode.string model.email )
+        ]
+
+
 doCreateUser : Model -> Cmd Msg
 doCreateUser model =
     let
+        body =
+            model
+                |> userEncoder
+                |> Http.jsonBody
+
         url =
             "http://localhost:8000/testok.json"
     in
-        Http.send UserCreated (Http.get url decodeUserData)
+        Http.send UserCreated (Http.post url body decodeUserData)
 
 
 decodeUserData : Decoder String
